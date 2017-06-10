@@ -1,7 +1,32 @@
+var express = require('express');
+var bodyParser = require('body-parser');
+
 // var mongoose = require('./db/mongoose').mongoose;
 var {mongoose} = require('./db/mongoose');
 var {User} = require('./models/user');
 var {Todo} = require('./models/todo');
+
+var app = express();
+app.use(bodyParser.json());
+
+// Routes
+app.post('/todos', (req, res) => {
+    var todo = new Todo({
+        text: req.body.text
+    });
+
+    todo.save().then((doc) => {
+        res.send(doc);
+    }, (err) => {
+        console.log("Unable to save todo"), 
+        res.status(400).send(err);
+    });
+});
+
+app.listen('3000', () => {
+    console.log('Started on port 3000');
+});
+
 
 
 
@@ -26,13 +51,3 @@ var {Todo} = require('./models/todo');
 // }, (err) => {
 //     console.log("Unable to save todo")
 // });
-
-var user = new User({
-    email: " ann@ann.com"
-});
-
-user.save().then((doc) => {
-    console.log("Saved User", (JSON.stringify(doc, undefined, 2)))
-}, (err) => {
-    console.log("Unable to save user", err)
-});
