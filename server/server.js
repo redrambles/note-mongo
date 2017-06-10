@@ -8,6 +8,9 @@ var {Todo} = require('./models/todo');
 const {ObjectID} = require('mongodb');
 
 var app = express();
+var port = process.env.PORT || 3000; // If Heroku will use process.env.PORT - if localhost, 3000
+
+
 app.use(bodyParser.json());
 
 // Routes
@@ -57,8 +60,8 @@ app.get('/todos/:id', (req, res) => {
 });
 
 
-app.listen('3000', () => {
-    console.log('Started on port 3000 \n');
+app.listen(port, () => {
+    console.log(`Started on port ${port} \n`);
 });
 
 
