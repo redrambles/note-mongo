@@ -23,31 +23,18 @@ app.post('/todos', (req, res) => {
     });
 });
 
+app.get('/todos', (req, res) => {
+    Todo.find().then((todos) => {
+        res.send({todos}); 
+        }, (e) => {
+            res.status(400).send(e);
+        })
+    });
+
+
 app.listen('3000', () => {
     console.log('Started on port 3000');
 });
 
 
 module.exports = {app};
-
-// var newTodo = new Todo({
-//     text: "Cook dinner"
-// });
-
-// newTodo.save().then((doc) => {
-//     console.log("Saved todo", doc)
-// }, (err) => {
-//     console.log("Unable to save todo")
-// });
-
-// var newTodo2 = new Todo({
-//     text: "Walk the dog",
-//     completed: true,
-//     completedAt: 35550
-// });
-
-// newTodo2.save().then((doc) => {
-//     console.log("Saved todo", (JSON.stringify(doc, undefined, 2)))
-// }, (err) => {
-//     console.log("Unable to save todo")
-// });
