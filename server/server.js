@@ -1,14 +1,15 @@
-var express = require('express');
-var bodyParser = require('body-parser');
+const _ = require('lodash');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-// var mongoose = require('./db/mongoose').mongoose;
-var {mongoose} = require('./db/mongoose');
-var {User} = require('./models/user');
-var {Todo} = require('./models/todo');
+// const mongoose = require('./db/mongoose').mongoose;
+const {mongoose} = require('./db/mongoose');
+const {User} = require('./models/user');
+const {Todo} = require('./models/todo');
 const {ObjectID} = require('mongodb');
 
-var app = express();
-var port = process.env.PORT || 3000; // If Heroku will use process.env.PORT - if localhost, 3000
+const app = express();
+const port = process.env.PORT || 3000; // If Heroku will use process.env.PORT - if localhost, 3000
 
 
 app.use(bodyParser.json());
@@ -61,10 +62,9 @@ app.get('/todos/:id', (req, res) => {
 
 
 // DELETE
-
 app.delete('/todos/:id', (req, res) => {
     // get the id
-    var id = req.params.id;
+    var id = req.params.id; // the ':id' stands for parameter that a user would enter ex: /todos/123
 
     // validate the id - if not valid, return 404
     if (!ObjectID.isValid(id)){
@@ -73,9 +73,7 @@ app.delete('/todos/:id', (req, res) => {
     }
 
     // remove todo by id
-    // success
     // if todo - send it back to user
-    
     Todo.findByIdAndRemove(id).then((todo) => {
         if (!todo) {
             return res.status(404).send();
@@ -84,13 +82,41 @@ app.delete('/todos/:id', (req, res) => {
         }).catch((e) => {
             res.status(400).send();
         });
-
 });
 
+app.patch('/todos/:id', (req, res) => {
+    var id = req.params.id;
+    var body = _.pick(req.body, ['text', 'completed']); //lodash allows us to pick specific values that we want users to be able to update
+
+    // validate the id - if not valid, return 404
+    if (!ObjectID.isValid(id)){
+        // console.log('ID not valid');
+        return res.status(404).send();
+    }
+
+    if (_.isBoolean(body.completed) && body.completed) { // if it's a boolean and is set to true
+        body.completedAt = new Date().getTime();
+    } else {
+        body.completed = false;
+        body.completedAt = null;
+    }
+
+    Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+        if (!todo) {
+            return res.status(404).send();
+        }
+        res.send({todo});
+        }).catch((e) => {
+            res.status(404).send();
+        })
+});
 
 app.listen(port, () => {
     console.log(`Started on port ${port} \n`);
 });
 
-
 module.exports = {app};
+
+// Need to have mongodb running in the background (at least locally)
+// Use 'node server/server.js' to start the web server
+// Use Postman to test
