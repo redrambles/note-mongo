@@ -1,3 +1,5 @@
+require('./config/config');
+
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -9,12 +11,14 @@ const {Todo} = require('./models/todo');
 const {ObjectID} = require('mongodb');
 
 const app = express();
-const port = process.env.PORT || 3000; // If Heroku will use process.env.PORT - if localhost, 3000
+const port = process.env.PORT;
 
 
 app.use(bodyParser.json());
 
 // Routes
+
+// POST /todos
 app.post('/todos', (req, res) => {
     var todo = new Todo({
         text: req.body.text
@@ -28,6 +32,7 @@ app.post('/todos', (req, res) => {
     });
 });
 
+// GET /todos
 app.get('/todos', (req, res) => {
     Todo.find().then((todos) => {
         res.send({todos}); 
@@ -84,6 +89,7 @@ app.delete('/todos/:id', (req, res) => {
         });
 });
 
+// PATCH
 app.patch('/todos/:id', (req, res) => {
     var id = req.params.id;
     var body = _.pick(req.body, ['text', 'completed']); //lodash allows us to pick specific values that we want users to be able to update
