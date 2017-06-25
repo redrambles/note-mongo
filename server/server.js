@@ -28,7 +28,7 @@ app.post('/todos', (req, res) => {
     todo.save().then((doc) => {
         res.send(doc);
     }, (err) => {
-        console.log("Unable to save todo"), 
+        //console.log("Unable to save todo"), 
         res.status(400).send(err);
     });
 });
@@ -131,7 +131,7 @@ app.post('/users', (req, res) => {
         }).then((token) => {
             res.header('x-auth', token).send(user);
         }).catch((err) => {
-            console.log("Unable to create user"), 
+            //console.log("Unable to create user"), 
             res.status(400).send(err);
         });
 });
