@@ -14,7 +14,13 @@ var Todo = mongoose.model('Todo', {
     completedAt: {
         type: Number,
         default: null // if not entered, will still pass
+    },
+    _creator: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
     }
 });
+
+
 
 module.exports = { Todo };
