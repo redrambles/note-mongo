@@ -136,6 +136,18 @@ app.post('/users', (req, res) => {
         });
 });
 
+// POST /users/login {email, password}
+app.post('/users/login', (req, res) => {
+    var body = _.pick(req.body, ['email', 'password']);
+    // res.send(body);
+    User.findByCredentials(body.email, body.password).then((user) => {
+        user.generateAuthToken().then((token) => {
+            res.header('x-auth', token).send(user);
+        });
+    }).catch((e) => {
+        res.status(400).send();
+    });
+})
 
 
 // runs after 'next' from 'authenticate'
